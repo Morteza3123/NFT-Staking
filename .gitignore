@@ -1,0 +1,12 @@
+node_modules
+./contracts/node_modules
+./contracts/.env
+./contracts/coverage
+./contracts/coverage.json
+./contracts/typechain
+./contracts/typechain-types
+./contracts/.gitignore
+
+#Hardhat files
+./contracts/cache
+./contracts/artifacts
