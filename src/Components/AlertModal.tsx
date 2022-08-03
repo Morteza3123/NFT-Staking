@@ -84,7 +84,18 @@ function AlertModal({ alertModal, setAlertModal, status }: AlertModalProps) {
                                         </div>
                                     </div>
                                 ) : (
-                                    ""
+                                    <div className="mt-6">
+                                        {/* Success message */}
+                                        <div className="mt-6 flex justify-center items-center text-7xl text-blue-500 ">
+                                            <BsArrowUpCircle color="red" />
+                                        </div>
+                                        <div className="flex flex-col justify-center items-center my-5 space-y-3">
+                                            <h1 className="dark:text-gray-200 text-gray-700 text-xl font-medium">
+                                                {t("transaction_failed")}
+                                            </h1>
+                                            
+                                        </div>
+                                    </div>
                                 )}
                                 {/* Modal footer includes close button */}
                                 <div className="mt-6 flex justify-center items-center ">

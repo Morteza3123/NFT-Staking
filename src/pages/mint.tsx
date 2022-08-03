@@ -4,6 +4,8 @@ import { create } from "ipfs-http-client";
 import { NFTStorage, File } from "nft.storage";
 import { arrayBuffer } from "stream/consumers";
 import { useSelector } from "react-redux";
+import AlertModal from "../Components/AlertModal";
+import Loading from "../Components/Loading";
 
 export default function Create() {
   const [selectedImg, setSelectedImg] = useState({
@@ -22,6 +24,11 @@ export default function Create() {
   const [loading, setLoading] = useState(false); //* Toggler for loading modal *//
   const [alert, setAlert] = useState(false);
   const [status, setStatus] = useState("");
+
+  const client = new NFTStorage({
+    token:
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkaWQ6ZXRocjoweEY4NmFkMENmMjBBQWYxNGJjN0M2RkU2NTY3NzA4OWNGYjllYjk3MzgiLCJpc3MiOiJuZnQtc3RvcmFnZSIsImlhdCI6MTY1MTY2MDQyNzYxMCwibmFtZSI6Ik1vcnRlemEzMTIzIn0.Nd7lE9fYw7O8mnT39WSkdmvHT2Ywcmj53PXW5PWgqvc",
+  });
 
   const imgHandler = async (event: any) => {
     if (event.target.files.length !== 0) {
@@ -52,24 +59,53 @@ export default function Create() {
   const library = useSelector((state: any) => state.counter.library);
 
   async function main() {
-
-    const client = new NFTStorage({
-      token:"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkaWQ6ZXRocjoweEY4NmFkMENmMjBBQWYxNGJjN0M2RkU2NTY3NzA4OWNGYjllYjk3MzgiLCJpc3MiOiJuZnQtc3RvcmFnZSIsImlhdCI6MTY1MTY2MDQyNzYxMCwibmFtZSI6Ik1vcnRlemEzMTIzIn0.Nd7lE9fYw7O8mnT39WSkdmvHT2Ywcmj53PXW5PWgqvc",
+    try {
+      if (library) {
+      setLoading(true);
       
-    });
 
-    const metadata = await client.store({
-      name: name,
-      description: description,
-      image: new File([blob], "pinpie.jpg", { type: typeOfFile }),
-    });
+      const metadata = await client.store({
+        name: name,
+        description: description,
+        image: new File([blob], "pinpie.jpg", { type: typeOfFile }),
+      });
+      // console.log(metadata);
+      // return
+      const signer = library.getSigner();
+      const res = await collectionContract
+        .connect(signer)
+        .safeMint(account, metadata.url, {
+          gasLimit: 3000000,
+        });
+      const receipt = await res.wait();
+      if (receipt.status === 1) {
+        setLoading(false);
+        setAlert(true);
+        setStatus("success");
+        setName("");
+        setDescription("");
+        setSelectedImg({
+          imgURL: "",
+          selected: false,
+        });
+      } else {
+        setLoading(false);
+        setAlert(true);
+        setStatus("failed");
+        setName("");
+        setDescription("");
+        setSelectedImg({
+          imgURL: "",
+          selected: false,
+        });
+      }
+    }
 
-    const signer = library.getSigner();
-    const res = await collectionContract.connect(signer).mint(metadata.url, {
-      gasLimit: 3000000,
-    });
+    } catch (error) {
+      setLoading(false);
+      console.log(error);
+    }
   }
-
 
   return (
     <div className="flex justify-center bg-gradient-to-b from-black  to-gray-900 bg-gray-900">
@@ -88,7 +124,7 @@ export default function Create() {
                   <img
                     src={selectedImg.imgURL}
                     alt=""
-                    className="lg:w-40 lg:h-40 w-52 h-52 rounded-lg p-[2px]"
+                    className="lg:w-52 lg:h-52 w-52 h-52 rounded-lg p-[2px]"
                   />
                 </div>
               ) : (
@@ -143,30 +179,34 @@ export default function Create() {
           </div>
         </div>
         {/* Create button */}
+
         <div className="createButton flex justify-center text-gray-200 ">
           <button
-            onClick={() => main()}
             disabled={
               name.length > 0 &&
               description.length > 0 &&
-              exLink.length > 0 &&
               selectedImg.selected
                 ? false
                 : true
             }
+            onClick={() => main()}
             className={`bg-blue-700 text-lg px-10 py-3 rounded-lg hover:shadow-boxFull hover:shadow-blue-600 hover:bg-blue-600 transition-all ease-linear duration-200 ${
-              name && description && selectedImg.selected && exLink
+              name && description && selectedImg.selected
                 ? "opacity-100 cursor-pointer"
                 : "opacity-50 cursor-not-allowed"
             }`}
           >
-            Create
+            {loading ? <Loading /> : "Create"}
           </button>
-          {/* <button onClick={() => console.log(collectionContract.address)}>
-            Console
-          </button> */}
+
+          <button
+            onClick={main}
+          >
+            HHH
+          </button>
         </div>
       </div>
+      <AlertModal alertModal={alert} setAlertModal={setAlert} status={status} />
     </div>
   );
 }
