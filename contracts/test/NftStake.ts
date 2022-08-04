@@ -26,12 +26,13 @@ describe("NfrStake", function () {
     const {collection, rewardToken, nftStaking, owner, account1, account2, unlockTime} = await delpoy();
     await rewardToken.addController(nftStaking.address);
     await collection.connect(account1).safeMint(account1.address, "HHH");
-    await collection.connect(account1).approve(nftStaking.address, toWei('0'));
-    await nftStaking.connect(account1).stake([toWei('0')]);
+    await collection.connect(account1).safeMint(account1.address, "GGG");
+    await collection.connect(account1).approve(nftStaking.address, ('1'));
+    await nftStaking.connect(account1).stake([('1')]);
     await time.increaseTo(unlockTime);
-    const earnedInfo = await nftStaking.connect(account1).earningInfo(account1.address, [toWei('0')]);
+    const earnedInfo = await nftStaking.connect(account1).earningInfo(account1.address, [('1')]);
     console.log(toEther(earnedInfo[0]));
-    await nftStaking.connect(account1).unstake([toWei('0')]);
+    await nftStaking.connect(account1).unstake([('1')]);
     const earned = await rewardToken.balanceOf(account1.address);
     console.log(toEther(earned));
     console.log(toEther(await rewardToken.totalSupply()));

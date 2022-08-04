@@ -6,6 +6,7 @@ import { arrayBuffer } from "stream/consumers";
 import { useSelector } from "react-redux";
 import AlertModal from "../Components/AlertModal";
 import Loading from "../Components/Loading";
+import { useNavigate } from "react-router-dom";
 
 export default function Create() {
   const [selectedImg, setSelectedImg] = useState({
@@ -24,6 +25,8 @@ export default function Create() {
   const [loading, setLoading] = useState(false); //* Toggler for loading modal *//
   const [alert, setAlert] = useState(false);
   const [status, setStatus] = useState("");
+
+  const navigate = useNavigate();
 
   const client = new NFTStorage({
     token:
@@ -88,6 +91,7 @@ export default function Create() {
           imgURL: "",
           selected: false,
         });
+        navigate('/')
       } else {
         setLoading(false);
         setAlert(true);

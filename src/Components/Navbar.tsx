@@ -73,7 +73,7 @@ export default function Navbar() {
       nftStakingAbi,
       library
     );
-    dispatch(setNftStakingContract(nftStakingContrct));
+    dispatch(setNftStakingContract(nftStakingContract));
   };
 
   const disConnect = async () => {

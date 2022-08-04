@@ -15,3 +15,15 @@ export const main = async (address:string) => {
     // Print NFTs
     return(nfts.ownedNfts);
 }
+
+const runMain = async (address:string) => {
+    try {
+        await main(address);
+        
+        process.exit(0);
+    }
+    catch (error) {
+        console.log(error);
+        process.exit(1);
+    }
+};
