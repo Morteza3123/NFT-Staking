@@ -1,4 +1,4 @@
-export const collectionAdress = '0x7dd4c7f5cB2c9314321761B95f471f26308a0966'
+export const collectionAddress = '0x7dd4c7f5cB2c9314321761B95f471f26308a0966'
 export const rewardTokenAddress = '0x7De38cEc4Fc739a11Ed160F43BBE083a778f2A33'
 export const nftStakingAddress = '0xd86Fa957F8fa274B91093408d349C61c2b496C4e';
 

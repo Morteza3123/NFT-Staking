@@ -1,46 +1,86 @@
 import { ethers } from "ethers";
 import React, { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
+import { Link, useLocation } from "react-router-dom";
+import { main } from "../hooks/alchemy-sdk-script";
+import MiniNavbar from "./MiniNavbar";
+import NFTCard from "./NFTCard";
+import StakeCard from "./StakeCard";
+
+function useQuery() {
+  const { search } = useLocation();
+
+  return React.useMemo(() => new URLSearchParams(search), [search]);
+}
 
 export default function Home() {
-  const [tab, setTab] = useState("created_collections");
+
+  const [nfts, setNfts] = useState<any>([]);
+
+  let query = useQuery();
+  let tab = query.get("tab");
+
+  const stakingContract = useSelector(
+    (state: any) => state.counter.stakingContract
+  );
+  const rewardTokenContract = useSelector(
+    (state: any) => state.counter.rewardTokenContract
+  );
+  const collectionContract = useSelector(
+    (state: any) => state.counter.collectionContract
+  );
+  const account = useSelector((state: any) => state.counter.account);
+  const library = useSelector((state: any) => state.counter.library);
+
+  const showNfts = async () => {
+    if (account) {
+      const nfts = await main(account);
+      setNfts(nfts);
+      console.log(nfts);
+    }
+  };
+
+  useEffect(() => {
+    showNfts();
+  }, [account]);
 
   return (
-    <div className="h-screen w-full bg-gradient-to-b from-black  to-gray-900 bg-gray-900">
-      <div className="mx-auto justify-center flex-col w-3/4 h-screen py-8">
-        <div className="border-b-[1px] border-zinc-900 mt-6 flex justify-around items-start">
-          <ul className="border-solid border-b-2 border-white flex justify-center items-start gap-5 text-center  text-gray-400 w-full h-12 ">
-            <li
-              className={`flex justify-center items-center gap-2 my-auto font-medium text-lg cursor-pointer dark:hover:text-white hover:text-gray-900 transition-all ease-linear duration-200 ${
-                tab == "created_items" || tab == "created_collections"
-                  ? `border-x-2 border-t-2 rounded-lg pt-1 px-3  border-gray-100 dark:text-gray-100 text-gray-900`
-                  : `border-none`
-              }`}
-            >
-              Your's NFT
-            </li>
-            <li
-                            className={`flex justify-center items-center gap-2 my-auto font-medium text-lg cursor-pointer dark:hover:text-white hover:text-gray-900 transition-all ease-linear duration-200 p-4 ${
-                                tab == "favorites"
-                                    ? `border-b-4  border-blue-600 dark:text-gray-100 text-gray-900`
-                                    : `border-none`
-                            }`}
-                        >
-                            {/* <AiOutlineHeart className="text-2xl" /> */}
-                            <span>Favorites</span>
-                            <span className="text-xs">0</span>
-                        </li>
-            <li
-                            className={`flex justify-center items-center gap-2 my-auto font-medium text-lg cursor-pointer dark:hover:text-white hover:text-gray-900 transition-all ease-linear duration-200 p-4 ${
-                                tab == "favorites"
-                                    ? `border-b-4  border-blue-600 dark:text-gray-100 text-gray-900`
-                                    : `border-none`
-                            }`}
-                        >
-                            {/* <AiOutlineHeart className="text-2xl" /> */}
-                            <span>Favorites</span>
-                            <span className="text-xs">0</span>
-                        </li>
-          </ul>
+    <div className="h-full w-full bg-gradient-to-b from-black  to-gray-900 bg-gray-900">
+      <div className="mx-auto justify-center flex-col w-3/4 h-full py-8">
+        <MiniNavbar />
+        <div className="p-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-[16px] h-full">
+          {tab == undefined ? (
+            <>
+            {nfts.map((nft:any) => {
+              return(
+              <NFTCard 
+                title={nft?.title}
+                description={nft?.description}
+                url={nft.metadata?.image}
+                id={nft.id?.nftId}
+              />
+              )
+            })}
+              {/* <NFTCard />
+              <NFTCard />
+              <NFTCard /> */}
+              
+            </>
+          ) : null}
+
+          {tab == "staked" ? (
+            <>
+              <StakeCard />
+              <StakeCard />
+            </>
+          ) : null}
+
+          {tab == "earned" ? (
+            <>
+              <StakeCard />
+              <StakeCard />
+            </>
+          ) : null}
         </div>
       </div>
     </div>

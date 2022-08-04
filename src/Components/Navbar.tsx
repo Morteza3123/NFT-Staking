@@ -13,7 +13,7 @@ import {
 import { RiLogoutCircleRLine } from "react-icons/ri";
 import {
   collectionAbi,
-  collectionAdress,
+  collectionAddress,
   nftStakingAbi,
   nftStakingAddress,
   rewardTokenAbi,
@@ -63,7 +63,7 @@ export default function Navbar() {
     );
     dispatch(setRewardTokenContract(rewardTokenContract));
     const collectionContract = new ethers.Contract(
-      collectionAdress,
+      collectionAddress,
       collectionAbi,
       library
     );
