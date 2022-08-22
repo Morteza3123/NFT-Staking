@@ -45,10 +45,10 @@ export default function Home() {
   const showStakedNfts = async () => {
     if (account && tab === "staked" && nftStakingContract) {
       const stakedNfts = await nftStakingContract.tokensOfOwner(account);
-      setStakedIds(stakedNfts);
       if (stakedNfts.length === 0) {
         setNotStaked(true);
       }
+      setStakedIds(stakedNfts);
     }
   };
 
@@ -126,12 +126,12 @@ export default function Home() {
             </>
           ) : null}
 
-          {tab == "earned" ? (
+          {/* {tab == "earned" ? (
             <>
               <StakeCard />
               <StakeCard />
             </>
-          ) : null}
+          ) : null} */}
           {/* </div> */}
         </div>
       </div>

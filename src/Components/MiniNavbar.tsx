@@ -33,7 +33,7 @@ export default function MiniNavbar() {
               <Link to="/?tab=staked">STAKED</Link>
               <span className="text-xs"></span>
             </li>
-            <li
+            {/* <li
               className={`flex justify-center items-center my-auto font-medium text-sm md:text-lg cursor-pointer dark:hover:text-white hover:text-gray-900 transition-all ease-linear duration-200 ${
                 tab == "earned"
                   ? `border-x-2 border-t-2 rounded-lg   border-gray-100 dark:text-gray-100 text-gray-900 w-20 md:w-32`
@@ -42,7 +42,7 @@ export default function MiniNavbar() {
             >
               <Link to="/?tab=earned">EARNED</Link>
               <span className="text-xs"></span>
-            </li>
+            </li> */}
           </ul>
         </div>
   )
