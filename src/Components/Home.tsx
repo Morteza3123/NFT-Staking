@@ -5,6 +5,7 @@ import { Link, useLocation } from "react-router-dom";
 import { main } from "../hooks/alchemy-sdk-script";
 import { getMetadata, getNfts } from "../hooks/getMetadata";
 import AlertModal from "./AlertModal";
+import ChainAlert from "./ChainAlert";
 import MiniNavbar from "./MiniNavbar";
 import NFTCard from "./NFTCard";
 import StakeCard from "./StakeCard";
@@ -22,6 +23,7 @@ export default function Home() {
   const [status, setStatus] = useState("");
   const [notStaked, setNotStaked] = useState(false);
   const [notNft, setNotNft] = useState(false);
+  // const [chainId, setChainId] = useState(0);
 
   let query = useQuery();
   let tab = query.get("tab");
@@ -31,6 +33,7 @@ export default function Home() {
   );
   const account = useSelector((state: any) => state.counter.account);
   const library = useSelector((state: any) => state.counter.library);
+  const chainId = useSelector((state: any) => state.counter.chainId);
 
   const showNfts = async () => {
     if (account) {
@@ -45,12 +48,42 @@ export default function Home() {
   const showStakedNfts = async () => {
     if (account && tab === "staked" && nftStakingContract) {
       const stakedNfts = await nftStakingContract.tokensOfOwner(account);
+      console.log(stakedNfts)
       if (stakedNfts.length === 0) {
         setNotStaked(true);
       }
       setStakedIds(stakedNfts);
     }
   };
+
+  // const checkNetwork = async () => {
+  //   if(library){
+  //     const { chainId } = await library.getNetwork();
+  //     setChainId(chainId);
+  //     console.log(library)
+  //   }
+  // }
+
+  // useEffect(() => {
+  //   if (library) {
+  //     library.on("chainChanged", (chainId: number) => {
+  //       setChainId(Number(chainId));
+  //       console.log(chainId)
+  //     });
+  //   }
+  // });
+
+//   useEffect(() => {
+//     // Subscribe to chainId change
+//     if(!library) return
+//   library.on("chainChanged", (chainId: number) => {
+//   console.log("CCC :",chainId);
+// });
+//   })
+
+  useEffect(() => {
+    // checkNetwork();
+  },[library])
 
   useEffect(() => {
     showNfts();
@@ -63,13 +96,14 @@ export default function Home() {
   return (
     <div className="h-full w-full bg-gradient-to-b from-black  to-gray-900 bg-gray-900">
       <div className="mx-auto justify-center flex-col w-3/4 h-full py-8">
+        {library && chainId !==4 ?<ChainAlert /> : null}
         <MiniNavbar />
         
         <div
           className={`p-2 pt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-[16px]`}
         >
-          {!library ? <div></div> : null}
-          {!library ? (
+          {!library || chainId!==4 ? <div></div> : null}
+          {!library || chainId!==4  ? (
             <div className="grid mx-auto text-center justify-center h-screen pt-10">
               <h1 className="text-white text-xl">Connect your wallet.</h1>
             </div>

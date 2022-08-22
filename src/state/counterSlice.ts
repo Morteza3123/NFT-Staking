@@ -3,6 +3,7 @@ import { createSlice } from '@reduxjs/toolkit'
 const initialState = {
   account: '',
   library: null,
+  chainId: null,
   rewardTokenContract: null,
   collectionContract: null,
   nftStakingContract: null
@@ -18,6 +19,9 @@ export const counterSlice = createSlice({
     setLibrary: (state:any, action:any) => {
       state.library = action.payload
     },
+    setChainId: (state:any, action:any) => {
+      state.chainId = action.payload
+    },
     setRewardTokenContract: (state:any, action:any) => {
       state.rewardTokenContract = action.payload
     },
@@ -31,6 +35,6 @@ export const counterSlice = createSlice({
 })
 
 // Action creators are generated for each case reducer function
-export const { setAccount, setLibrary, setRewardTokenContract, setCollectionContract, setNftStakingContract,  } = counterSlice.actions
+export const { setAccount, setLibrary, setChainId, setRewardTokenContract, setCollectionContract, setNftStakingContract,  } = counterSlice.actions
 
 export default counterSlice.reducer

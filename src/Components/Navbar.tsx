@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { web3Modal } from "./Web3Modal";
+import { Provider } from "web3modal";
 import { ethers } from "ethers";
 import Hamburger from "hamburger-react";
 import {
@@ -9,6 +10,7 @@ import {
   setCollectionContract,
   setRewardTokenContract,
   setNftStakingContract,
+  setChainId,
 } from "../state/counterSlice";
 import { RiLogoutCircleRLine } from "react-icons/ri";
 import {
@@ -31,6 +33,7 @@ export default function Navbar() {
   });
 
   const [isOpen, setIsOpen] = useState(false);
+  const [provider, setProvider] = useState<any>(null);
 
   const dispatch = useDispatch();
   const account = useSelector((state: any) => state.counter.account);
@@ -47,8 +50,11 @@ export default function Navbar() {
 
   const connect = async () => {
     const provider = await web3Modal.connect();
+    setProvider(provider);
     const library = new ethers.providers.Web3Provider(provider);
     if (library) {
+      const { chainId } = await library.getNetwork();
+      dispatch(setChainId(chainId));
       dispatch(setLibrary(library));
     }
     const accounts = await library.listAccounts();
@@ -87,6 +93,15 @@ export default function Navbar() {
       localStorage.clear();
     }
   };
+
+  useEffect(() => {
+    if (provider) {
+      provider.on("chainChanged", (chainId: number) => {
+        dispatch(setChainId(Number(chainId)));
+      });
+    }
+  });
+  
 
   useEffect(() => {
     const wallet = localStorage.getItem("NftStaking");
@@ -152,7 +167,6 @@ export default function Navbar() {
           )}
         </div>
 
-
         {/* Responsive hamburger icon */}
         <div className="menuIcon inline-block md:hidden  dark:text-gray-200 rounded-md">
           <Hamburger
@@ -163,8 +177,6 @@ export default function Navbar() {
             size={30}
           />
         </div>
-
-
 
         {/* Vertical navbar */}
         {isOpen ? (
@@ -208,15 +220,15 @@ export default function Navbar() {
                     >
                       <RiLogoutCircleRLine
                         className="Disconnect cursor-pointer text-white dark:text-gray-200 text-xl md:text-3xl"
-                        onClick={() => {disConnect();}}
+                        onClick={() => {
+                          disConnect();
+                        }}
                       />
                     </div>
                   </div>
                 )}
-                </div>
               </div>
-
-             
+            </div>
           </>
         ) : null}
       </animated.div>
